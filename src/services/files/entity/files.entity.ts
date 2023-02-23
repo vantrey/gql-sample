@@ -18,30 +18,31 @@ export class CreateFileDto {
   isPrivate: boolean;
 }
 
-@Schema({ collection: 'users' })
+@Schema({ collection: 'files' })
 export class FilesEntity {
-  @Prop({ required: true })
+  @Prop()
   _id: ObjectId;
 
-  @Prop({ required: true, enum: FileType })
+  @Prop({ enum: FileType })
   type: FileType;
 
-  @Prop({ required: true })
+  @Prop()
   fileName: string;
 
-  @Prop({ required: true })
+  @Prop()
   ext: string;
 
-  @Prop({ required: true })
+  @Prop()
   url: string;
 
-  @Prop({ required: true })
+  @Prop()
   createdAt: Date;
 
-  @Prop({ required: true })
+  @Prop()
   isPrivate: boolean;
 
   initialize(dto: CreateFileDto) {
+    this._id = new ObjectId();
     this.createdAt = new Date();
     this.isPrivate = dto.isPrivate;
     this.type = dto.type;
