@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   CreateUserDto,
   UpdateUserDto,
-  UserDocument,
+  UserDocumentModelType,
   UsersEntity,
 } from '../entity/users.entity';
-import { ObjectId } from 'mongodb';
 
 class UserViewDto {
   constructor(model) {
+    //TODO: fix incorrect mapping
     Object.assign(this, model);
     this.id = model._id.toString();
   }
@@ -27,12 +26,12 @@ class UserViewDto {
 export class UsersServiceAdapter {
   constructor(
     @InjectModel(UsersEntity.name)
-    private readonly UserDocumentModel: Model<UserDocument>,
+    private readonly UserDocumentModel: UserDocumentModelType,
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<string> {
-    const newUser = new this.UserDocumentModel();
-    newUser.initialize(dto);
+    const newUser = this.UserDocumentModel.initialize(dto);
+
     await newUser.save();
 
     return newUser._id.toString();
@@ -40,7 +39,7 @@ export class UsersServiceAdapter {
 
   async updateUser(dto: UpdateUserDto, userId: string): Promise<boolean> {
     const user = await this.UserDocumentModel.findOne({
-      _id: new ObjectId(userId),
+      _id: userId,
     });
 
     if (!user) {
@@ -55,7 +54,7 @@ export class UsersServiceAdapter {
 
   async replaceAvatar(userId: string, avatarId: string): Promise<boolean> {
     const user = await this.UserDocumentModel.findOne({
-      _id: new ObjectId(userId),
+      _id: userId,
     });
 
     if (!user) {
@@ -68,9 +67,9 @@ export class UsersServiceAdapter {
     return true;
   }
 
-  async getUserById(id: string): Promise<UserViewDto> {
+  async getUserById(id: string): Promise<UserViewDto | null> {
     const result = await this.UserDocumentModel.findOne({
-      _id: new ObjectId(id),
+      _id: id,
     }).lean();
 
     if (!result) {
@@ -87,9 +86,8 @@ export class UsersServiceAdapter {
   }
 
   async getUsersByIds(ids: string[]): Promise<UserViewDto[]> {
-    const objectIds = ids.map((id) => new ObjectId(id));
     const result = await this.UserDocumentModel.find({
-      _id: objectIds,
+      _id: ids,
     }).lean();
 
     return result.map((result) => new UserViewDto(result));

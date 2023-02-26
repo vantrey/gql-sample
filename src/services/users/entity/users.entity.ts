@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { ObjectId } from 'mongodb';
+import { HydratedDocument, Model } from 'mongoose';
 
 export class CreateUserDto {
   name: string;
@@ -11,41 +10,44 @@ export class UpdateUserDto {
   age?: number;
 }
 
-@Schema({ collection: 'users' })
-export class UsersEntity {
-  @Prop({ type: mongoose.Types.ObjectId })
-  _id: ObjectId;
+const statics = {
+  initialize(dto: CreateUserDto): UserDocument {
+    const user = {
+      ...dto,
+      email: null,
+      age: null,
+      avatarId: null,
+      createdAt: new Date(),
+      updatedAt: null,
+    };
 
+    return new this(user);
+  },
+};
+
+type UserModelStatic = typeof statics;
+
+@Schema({ collection: 'users', statics })
+export class UsersEntity {
   @Prop()
   name: string;
 
-  @Prop()
+  @Prop({ type: Number, required: false })
   age: number | null;
 
-  @Prop()
+  @Prop({ type: String, required: false })
   email: string | null;
 
-  @Prop()
+  @Prop({ type: String, required: false })
   avatarId: string | null;
 
-  @Prop()
+  @Prop({ type: Date, required: true })
   createdAt: Date;
 
-  @Prop()
+  @Prop({ type: Date, required: false })
   updatedAt: Date | null;
 
-  initialize(dto: CreateUserDto) {
-    Object.assign(this, dto);
-    this.email = null;
-    this.age = null;
-    this.avatarId = null;
-    this.createdAt = new Date();
-    this.updatedAt = null;
-    this._id = new ObjectId();
-  }
-
   updateUser(dto: UpdateUserDto) {
-    console.log(dto);
     this.age = dto.age ? dto.age : this.age;
     this.email = dto.email ? dto.email : this.email;
 
@@ -64,9 +66,10 @@ export class UsersEntity {
 export const UserSchema = SchemaFactory.createForClass(UsersEntity);
 
 UserSchema.methods = {
-  initialize: UsersEntity.prototype.initialize,
   updateUser: UsersEntity.prototype.updateUser,
   replaceAvatar: UsersEntity.prototype.replaceAvatar,
 };
 
-export type UserDocument = UsersEntity & Document<ObjectId>;
+type UserDocument = HydratedDocument<UsersEntity>;
+
+export type UserDocumentModelType = Model<UserDocument> & UserModelStatic;

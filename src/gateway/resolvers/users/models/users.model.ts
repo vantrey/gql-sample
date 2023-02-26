@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType({ description: 'user profile' })
 export class UserModel {
@@ -8,18 +8,18 @@ export class UserModel {
   @Field()
   name: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   email: string | null;
 
-  @Field({ nullable: true })
-  age: number;
+  @Field(() => Int, { nullable: true })
+  age: number | null;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   avatarId: string | null;
 
   @Field(() => Date)
   createdAt: Date;
 
   @Field(() => Date, { nullable: true })
-  updatedAt: Date;
+  updatedAt: Date | null;
 }

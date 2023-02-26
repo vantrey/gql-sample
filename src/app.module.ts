@@ -19,6 +19,8 @@ import { GatewayModule } from './gateway/gateway.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
+      introspection: true,
+      playground: true,
     }),
   ],
 

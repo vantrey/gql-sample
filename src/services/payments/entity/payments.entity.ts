@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { ObjectId } from 'mongodb';
+import { HydratedDocument, Model } from 'mongoose';
 
 export enum Currency {
   BYN = 'BYN',
@@ -8,21 +7,31 @@ export enum Currency {
 }
 
 export class CreatePaymentDto {
-  constructor(model: CreatePaymentDto) {
-    Object.assign(this, model);
-  }
   contributorId: string;
   price: number;
   currency: Currency;
   billId: string;
 }
 
-@Schema({ collection: 'payment' })
-export class PaymentsEntity {
-  @Prop({ required: true, type: mongoose.Types.ObjectId })
-  _id: ObjectId;
+const statics = {
+  initialize(dto: CreatePaymentDto): PaymentDocument {
+    const payment = {
+      ...dto,
+      createdAt: new Date(),
+    };
 
-  @Prop({ required: true, enum: Currency })
+    return new this(payment);
+  },
+};
+
+type PaymentModelStatic = typeof statics;
+
+@Schema({
+  collection: 'payment',
+  statics,
+})
+export class PaymentsEntity {
+  @Prop({ enum: Currency, required: true })
   currency: Currency;
 
   @Prop({ required: true })
@@ -36,21 +45,12 @@ export class PaymentsEntity {
 
   @Prop({ required: true })
   createdAt: Date;
-
-  initialize(dto: CreatePaymentDto) {
-    this.contributorId = dto.contributorId;
-    this.price = dto.price;
-    this.currency = dto.currency;
-    this.createdAt = new Date();
-    this.billId = dto.billId;
-    this._id = new ObjectId();
-  }
 }
 
-export const PaymentSchema = SchemaFactory.createForClass(PaymentsEntity);
+export const PaymentSchema =
+  SchemaFactory.createForClass<PaymentsEntity>(PaymentsEntity);
 
-PaymentSchema.methods = {
-  initialize: PaymentsEntity.prototype.initialize,
-};
+export type PaymentDocument = HydratedDocument<PaymentsEntity>;
 
-export type PaymentDocument = PaymentsEntity & Document<ObjectId>;
+export type PaymentDocumentModelType = Model<PaymentDocument> &
+  PaymentModelStatic;

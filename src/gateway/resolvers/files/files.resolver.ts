@@ -8,7 +8,7 @@ export class FilesResolver {
   constructor(private filesServiceAdapter: FilesServiceAdapter) {}
 
   @Query(() => FilesModel, { name: 'file', nullable: true })
-  async getFile(@Args('id') id: string): Promise<FilesModel> {
+  async getFile(@Args('id') id: string): Promise<FilesModel | null> {
     return this.filesServiceAdapter.getFileById(id);
   }
 

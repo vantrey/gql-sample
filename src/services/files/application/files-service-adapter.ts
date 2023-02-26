@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   CreateFileDto,
-  FileDocument,
+  FileDocumentModelType,
   FilesEntity,
   FileType,
 } from '../entity/files.entity';
-import { ObjectId } from 'mongodb';
 
 export class FileViewDto {
   constructor(model) {
+    //TODO: fix incorrect mapping
     Object.assign(this, model);
     this.id = model._id.toString();
   }
@@ -27,21 +26,21 @@ export class FileViewDto {
 export class FilesServiceAdapter {
   constructor(
     @InjectModel(FilesEntity.name)
-    private readonly FileDocumentModel: Model<FileDocument>,
+    private readonly FileDocumentModel: FileDocumentModelType,
   ) {}
 
   async createFile(dto: CreateFileDto): Promise<string> {
-    const newFile = new this.FileDocumentModel();
+    const newFile = this.FileDocumentModel.initialize(dto);
 
-    newFile.initialize(dto);
     await newFile.save();
 
     return newFile._id.toString();
   }
 
-  async getFileById(id: string): Promise<FileViewDto> {
+  async getFileById(id: string): Promise<FileViewDto | null> {
+    console.log('get file by id');
     const result = await this.FileDocumentModel.findOne({
-      _id: new ObjectId(id),
+      _id: id,
     }).lean();
 
     if (!result) {
@@ -57,10 +56,10 @@ export class FilesServiceAdapter {
     return result.map((result) => new FileViewDto(result));
   }
 
-  async getUsersByIds(ids: string[]): Promise<FileViewDto[]> {
-    const objectIds = ids.map((id) => new ObjectId(id));
+  async getFilesByIds(ids: string[]): Promise<FileViewDto[]> {
+    console.log('get file by ids');
     const result = await this.FileDocumentModel.find({
-      _id: objectIds,
+      _id: ids,
     }).lean();
 
     return result.map((result) => new FileViewDto(result));

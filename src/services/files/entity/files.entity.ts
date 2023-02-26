@@ -1,9 +1,5 @@
-/*import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument} from 'mongoose';*/
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-import { ObjectId } from 'mongodb';
+import { HydratedDocument, Model } from 'mongoose';
 
 export enum FileType {
   Img = 'IMG',
@@ -11,53 +7,54 @@ export enum FileType {
 }
 
 export class CreateFileDto {
-  constructor(model: CreateFileDto) {
-    Object.assign(this, model);
-  }
   type: FileType;
   isPrivate: boolean;
 }
 
-@Schema({ collection: 'files' })
-export class FilesEntity {
-  @Prop()
-  _id: ObjectId;
+const statics = {
+  initialize(dto: CreateFileDto): FileDocument {
+    const ext = dto.type === FileType.Img ? 'jpg' : 'txt';
 
-  @Prop({ enum: FileType })
+    const fileName = `${
+      dto.isPrivate ? 'private-file-name' : 'public-file-name'
+    }_${Date.now().toString().slice(3, 8)}`;
+
+    const file = {
+      createdAt: new Date(),
+      isPrivate: dto.isPrivate,
+      type: dto.type,
+      ext,
+      fileName,
+      url: `https://some-storage/files/${fileName}.${ext}`,
+    };
+
+    return new this(file);
+  },
+};
+
+@Schema({ collection: 'files', statics })
+export class FilesEntity {
+  @Prop({ enum: FileType, required: true })
   type: FileType;
 
-  @Prop()
+  @Prop({ required: true })
   fileName: string;
 
-  @Prop()
+  @Prop({ required: true })
   ext: string;
 
-  @Prop()
+  @Prop({ required: true })
   url: string;
 
-  @Prop()
+  @Prop({ required: true })
   createdAt: Date;
 
-  @Prop()
+  @Prop({ required: true })
   isPrivate: boolean;
-
-  initialize(dto: CreateFileDto) {
-    this._id = new ObjectId();
-    this.createdAt = new Date();
-    this.isPrivate = dto.isPrivate;
-    this.type = dto.type;
-    this.ext = dto.type === FileType.Img ? 'jpg' : 'txt';
-    this.fileName = `${
-      this.isPrivate ? 'private-file-name' : 'public-file-name'
-    }_${this._id.toString().slice(3, 8)}`;
-    this.url = `https://some-storage/files/${this.fileName}.${this.ext}`;
-  }
 }
 
 export const FileSchema = SchemaFactory.createForClass(FilesEntity);
 
-FileSchema.methods = {
-  initialize: FilesEntity.prototype.initialize,
-};
+type FileDocument = HydratedDocument<FilesEntity>;
 
-export type FileDocument = HydratedDocument<FilesEntity>;
+export type FileDocumentModelType = Model<FileDocument> & typeof statics;
