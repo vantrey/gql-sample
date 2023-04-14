@@ -1,8 +1,95 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/gql-gateway/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/gql-gateway/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/gql-gateway",
+  "projects": {
+    "gql-gateway": {
+      "type": "application",
+      "root": "apps/gql-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/gql-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gql-gateway/tsconfig.app.json"
+      }
+    },
+    "gql-users": {
+      "type": "application",
+      "root": "apps/gql-users",
+      "entryFile": "main",
+      "sourceRoot": "apps/gql-users/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gql-users/tsconfig.app.json"
+      }
+    },
+    "gql-files": {
+      "type": "application",
+      "root": "apps/gql-files",
+      "entryFile": "main",
+      "sourceRoot": "apps/gql-files/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gql-files/tsconfig.app.json"
+      }
+    },
+    "gql-payments": {
+      "type": "application",
+      "root": "apps/gql-payments",
+      "entryFile": "main",
+      "sourceRoot": "apps/gql-payments/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gql-payments/tsconfig.app.json"
+      }
+    },
+    "core-http-service": {
+      "type": "library",
+      "root": "libs/core-http-service",
+      "entryFile": "index",
+      "sourceRoot": "libs/core-http-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/core-http-service/tsconfig.lib.json"
+      }
+    },
+    "core-http": {
+      "type": "library",
+      "root": "libs/core-http",
+      "entryFile": "index",
+      "sourceRoot": "libs/core-http/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/core-http/tsconfig.lib.json"
+      }
+    },
+    "http-users": {
+      "type": "library",
+      "root": "libs/http-users",
+      "entryFile": "index",
+      "sourceRoot": "libs/http-users/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/http-users/tsconfig.lib.json"
+      }
+    },
+    "http-payments": {
+      "type": "library",
+      "root": "libs/http-payments",
+      "entryFile": "index",
+      "sourceRoot": "libs/http-payments/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/http-payments/tsconfig.lib.json"
+      }
+    },
+    "http-files": {
+      "type": "library",
+      "root": "libs/http-files",
+      "entryFile": "index",
+      "sourceRoot": "libs/http-files/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/http-files/tsconfig.lib.json"
+      }
+    }
   }
 }

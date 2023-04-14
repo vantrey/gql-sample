@@ -16,6 +16,38 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@app/core-http-service": [
+        "libs/core-http-service/src"
+      ],
+      "@app/core-http-service/*": [
+        "libs/core-http-service/src/*"
+      ],
+      "@app/core-http": [
+        "libs/core-http/src"
+      ],
+      "@app/core-http/*": [
+        "libs/core-http/src/*"
+      ],
+      "@app/http-users": [
+        "libs/http-users/src"
+      ],
+      "@app/http-users/*": [
+        "libs/http-users/src/*"
+      ],
+      "@app/http-payments": [
+        "libs/http-payments/src"
+      ],
+      "@app/http-payments/*": [
+        "libs/http-payments/src/*"
+      ],
+      "@app/http-files": [
+        "libs/http-files/src"
+      ],
+      "@app/http-files/*": [
+        "libs/http-files/src/*"
+      ]
+    }
   }
 }
