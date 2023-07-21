@@ -6,8 +6,7 @@ import { DatabaseService } from './mongo.service';
   imports: [
     MongooseModule.forRootAsync({
       useFactory: () => {
-        const MONGO_URI =
-          'mongodb+srv://ivan:BADdViIct7rWVvkM@cluster0.czpft.mongodb.net/gql';
+        const MONGO_URI = 'mongodb://localhost:27017';
 
         console.log('MONGO_URL =', MONGO_URI);
 
