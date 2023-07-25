@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseService } from './mongo.service';
 
-console.log('commit');
-
 @Module({
   imports: [
     MongooseModule.forRootAsync({
