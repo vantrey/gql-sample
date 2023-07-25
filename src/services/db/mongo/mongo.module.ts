@@ -9,6 +9,7 @@ import { DatabaseService } from './mongo.service';
         const MONGO_URI = 'mongodb://localhost:27017';
 
         console.log('MONGO_URL =', MONGO_URI);
+        console.log('MONGO_URL =', MONGO_URI);
 
         return {
           uri: MONGO_URI,
