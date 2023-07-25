@@ -11,6 +11,7 @@ import { DatabaseService } from './mongo.service';
         console.log('MONGO_URL =', MONGO_URI);
         console.log('MONGO_URL =', MONGO_URI);
         console.log('MONGO_URL =', MONGO_URI);
+        console.log('MONGO_URL =', MONGO_URI);
 
         return {
           uri: MONGO_URI,
